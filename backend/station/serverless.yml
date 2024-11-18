@@ -66,8 +66,10 @@ provider:
           Resource: '*'
 
 functions:
-  hello:
+  api:
     handler: src/server.handler
+    # layers:
+    #   - !Ref LayerDependenciesLambdaLayer
     events:
       - httpApi: '*'
     environment:
@@ -92,7 +94,49 @@ custom:
   #     offline:
   #       - httpApi: "*"
 
+# package:
+#   individually: true
+
 plugins:
   - serverless-cloudside-plugin
   - serverless-dynamodb
   - serverless-offline
+
+build:
+  esbuild:
+    # Enable or Disable bundling the function code and dependencies. (Default: true)
+    bundle: true
+    # Enable minifying function code. (Default: false)
+    minify: false
+    # NPM packages to not be bundled. Glob patterns are supported here.
+    # external:
+    #   - '@aws-sdk/client-s3'
+    # NPM packages to not be bundled, as well as not included in node_modules
+    # in the zip file uploaded to Lambda. By default this will be set to aws-sdk
+    # if the runtime is set to nodejs16.x or lower or set to @aws-sdk/* if set to nodejs18.x or higher.
+    # Glob patterns are supported here.
+    exclude:
+      - '@aws-sdk/*'
+    # The packages config, this can be set to override the behavior of external
+    # If this is set then all dependencies will be treated as external and not bundled.
+    packages: external
+    # By default Framework will attempt to build and package all functions concurrently.
+    # This property can bet set to a different number if you wish to limit the
+    # concurrency of those operations.
+    # buildConcurrency: 3
+    # Enable or configure sourcemaps, can be set to true or to an object with further configuration.
+    # sourcemap:
+    #   # The sourcemap type to use, options are (inline, linked, or external)
+    #   type: linked
+    #   # Whether to set the NODE_OPTIONS on functions to enable sourcemaps on Lambda
+    #   setNodeOptions: true
+# layers:
+#   layerDependencies:
+#     path: ../../node_modules # required, path to layer contents on disk
+#     name: ${sls:stage}-layerDependencies # optional, Deployed Lambda layer name
+#     description: Description of what the lambda layer does # optional, Description to publish to AWS
+
+#     # allowedAccounts: # optional, a list of AWS account IDs allowed to access this layer.
+#     #   - '*'
+#     # note: uncommenting this will give all AWS users access to this layer unconditionally.
+#     retain: false # optional, false by default. If true, layer versions are not deleted as new ones are created

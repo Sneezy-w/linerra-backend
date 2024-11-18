@@ -1,10 +1,10 @@
 import express from 'express';
-import trace from 'system/src/middlewares/trace.js';
-import contextInjector from 'system/src/middlewares/contextInjector.js';
-import ErrorShowType from 'system/src/enum/errorShowType.js';
+import trace from '@linerra/core/src/middlewares/trace.js';
+import contextInjector from '@linerra/core/src/middlewares/contextInjector.js';
+import ErrorShowType from '@linerra/core/src/enum/errorShowType.js';
 import path from './routes/common/path.js';
 import apiRouter from './routes/index.js';
-import errorHandler from 'system/src/middlewares/errorHandler.js';
+import errorHandler from '@linerra/core/src/middlewares/errorHandler.js';
 // create our Express app
 const app = express();
 

@@ -7,7 +7,7 @@
   "dependencies": {
     "express": "^4.21.1",
     "serverless-http": "^3.2.0",
-    "system": "*"
+    "@linerra/core": "*"
   },
   "devDependencies": {
     "serverless-cloudside-plugin": "^1.1.0",

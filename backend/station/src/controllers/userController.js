@@ -1,6 +1,6 @@
-import * as stationCognitoService from 'system/src/services/stationCognitoService.js';
-import logger from 'system/src/utils/logger.js';
-import ErrorShowType from 'system/src/enum/errorShowType.js';
+import * as stationCognitoService from '@linerra/core/src/services/stationCognitoService.js';
+import logger from '@linerra/core/src/utils/logger.js';
+import ErrorShowType from '@linerra/core/src/enum/errorShowType.js';
 // import {
 //   accessVerifier,
 //   idTokenVerifier,
