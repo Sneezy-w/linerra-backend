@@ -1,0 +1,150 @@
+# This is a shared CloudFormation service that is being referenced by the traditional and SAM services.
+# This is a good place to put shared resources like DynamoDB tables, S3 buckets, etc.
+# that will be used by other services.
+
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  StationUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${param:stationUserPoolName}
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_LINK
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate:
+          - email
+      Schema:
+        - AttributeDataType: String
+          Name: stationId
+          Mutable: true
+          #Required: true
+          StringAttributeConstraints:
+            MinLength: 36
+            MaxLength: 36
+        - AttributeDataType: String
+          Name: stationNo
+          Mutable: true
+          #Required: true
+          StringAttributeConstraints:
+            MinLength: 2
+            MaxLength: 2
+
+  StationUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    #DependsOn: StationUserPoolIdentityProviderGoogle
+    Properties:
+      ClientName: ${param:stationUserPoolClientName}
+      UserPoolId: !Ref StationUserPool
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        #- email
+        - openid
+        #- profile
+        - aws.cognito.signin.user.admin
+      CallbackURLs:
+        - ${param:stationFrontendUrl}/user/login
+      # SupportedIdentityProviders:
+      #   - Google
+      WriteAttributes:
+        - email
+        - name
+        - phone_number
+        - custom:stationId
+        - custom:stationNo
+
+  StationUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: ${param:stationUserPoolDomain}
+      UserPoolId: !Ref StationUserPool
+
+  MainTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${param:mainTable}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: expirationTime
+        Enabled: true
+
+  S3LabelBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${param:labelBucketName}
+  # SharedTable:
+  #   Type: "AWS::DynamoDB::Table"
+  #   Properties:
+  #     # We are using the parameter passed down from Serverless Compose, and the current stage.
+  #     # To construct the final table name.
+  #     TableName: ${param:tableNamePrefix}-${sls:stage}
+  #     AttributeDefinitions:
+  #       - AttributeName: "Id"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: "Id"
+  #         KeyType: "HASH"
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 5
+  #       WriteCapacityUnits: 5
+# We are outputting the table name so that other services can reference it.
+Outputs:
+  StationUserPoolId:
+    Value: !Ref StationUserPool
+  StationUserPoolClientId:
+    Value: !Ref StationUserPoolClient

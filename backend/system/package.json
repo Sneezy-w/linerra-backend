@@ -1,0 +1,15 @@
+{
+  "name": "system",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "amazon-cognito-identity-js": "^6.3.12",
+    "aws-jwt-verify": "^4.0.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.693.0"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "station",
+  "version": "0.0.1",
+  "main": "src/server.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.1",
+    "serverless-http": "^3.2.0",
+    "system": "*"
+  },
+  "devDependencies": {
+    "serverless-cloudside-plugin": "^1.1.0",
+    "serverless-dynamodb": "^0.2.56",
+    "serverless-offline": "^14.3.4",
+    "types": "*"
+  }
+}
