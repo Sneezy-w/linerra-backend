@@ -12,7 +12,6 @@
   "devDependencies": {
     "serverless-cloudside-plugin": "^1.1.0",
     "serverless-dynamodb": "^0.2.56",
-    "serverless-offline": "^14.3.4",
-    "types": "*"
+    "serverless-offline": "^14.3.4"
   }
 }

@@ -1,6 +1,6 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended.js';
+//import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -23,5 +23,4 @@ export default [
   },
   pluginJs.configs.recommended,
   //js.configs.all,
-  eslintPluginPrettierRecommended,
 ];

@@ -1,17 +1,23 @@
 {
   "name": "root",
   "private": true,
+  "type": "module",
   "workspaces": [
     "backend/*",
     "packages/*"
   ],
+  "scripts": {
+    "build:station-layer": "node scripts/build-station-layer.js",
+    "deploy:station": "yarn build:station-layer && cd backend && serverless deploy --service station"
+  },
   "devDependencies": {
-    "eslint-config-prettier": "^9.1.0",
     "lerna": "^8.1.9",
-    "prettier": "3.3.3",
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",
-    "globals": "^15.12.0"
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "prettier": "3.3.3"
   },
   "version": "0.0.1",
   "author": "Hamilton Wang <hamilton.y.wang@gmail.com>",

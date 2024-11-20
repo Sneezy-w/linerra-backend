@@ -68,8 +68,8 @@ provider:
 functions:
   api:
     handler: src/server.handler
-    # layers:
-    #   - !Ref LayerDependenciesLambdaLayer
+    layers:
+      - !Ref LayerDependenciesLambdaLayer
     events:
       - httpApi: '*'
     environment:
@@ -107,7 +107,7 @@ build:
     # Enable or Disable bundling the function code and dependencies. (Default: true)
     bundle: true
     # Enable minifying function code. (Default: false)
-    minify: false
+    minify: true
     # NPM packages to not be bundled. Glob patterns are supported here.
     # external:
     #   - '@aws-sdk/client-s3'
@@ -125,18 +125,21 @@ build:
     # concurrency of those operations.
     # buildConcurrency: 3
     # Enable or configure sourcemaps, can be set to true or to an object with further configuration.
-    # sourcemap:
-    #   # The sourcemap type to use, options are (inline, linked, or external)
-    #   type: linked
-    #   # Whether to set the NODE_OPTIONS on functions to enable sourcemaps on Lambda
-    #   setNodeOptions: true
-# layers:
-#   layerDependencies:
-#     path: ../../node_modules # required, path to layer contents on disk
-#     name: ${sls:stage}-layerDependencies # optional, Deployed Lambda layer name
-#     description: Description of what the lambda layer does # optional, Description to publish to AWS
+    sourcemap:
+      # The sourcemap type to use, options are (inline, linked, or external)
+      type: linked
+      # Whether to set the NODE_OPTIONS on functions to enable sourcemaps on Lambda
+      setNodeOptions: true
 
-#     # allowedAccounts: # optional, a list of AWS account IDs allowed to access this layer.
-#     #   - '*'
-#     # note: uncommenting this will give all AWS users access to this layer unconditionally.
-#     retain: false # optional, false by default. If true, layer versions are not deleted as new ones are created
+layers:
+  layerDependencies:
+    path: layer # required, path to layer contents on disk
+    name: ${sls:stage}-layerDependencies # optional, Deployed Lambda layer name
+    description: Description of what the lambda layer does # optional, Description to publish to AWS
+
+    # allowedAccounts: # optional, a list of AWS account IDs allowed to access this layer.
+    #   - '*'
+    # note: uncommenting this will give all AWS users access to this layer unconditionally.
+    retain: false # optional, false by default. If true, layer versions are not deleted as new ones are created
+    allowedAccounts:
+      - '*'

@@ -11,6 +11,7 @@ notes.md
 *.pdf
 
 /node_modules
+/.layer
 /.pnp
 .pnp.js
 
