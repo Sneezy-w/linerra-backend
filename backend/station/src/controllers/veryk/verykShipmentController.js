@@ -1,13 +1,17 @@
-import * as verykShipmentService from '@linerra/core/src/services/veryk/verykShipmentService.js';
 import {
-  shipmentDOToDetailResVO,
-  shipmentDOToEditResVO,
-} from '@linerra/core/src/models/veryk/shipment.convert.js';
+  verykShipmentService,
+  s3Service,
+  ErrorShowType,
+  logger,
+  verykUtils,
+  shipmentConvert,
+} from '@linerra/core';
+//import { shipmentDOToDetailResVO, shipmentDOToEditResVO } from '@linerra/core';
 //import _ from 'lodash';
-import * as s3Service from '@linerra/core/src/services/s3Service.js';
-import ErrorShowType from '@linerra/core/src/enum/errorShowType.js';
-import logger from '@linerra/core/src/utils/logger.js';
-import { tracking as trackingApi } from '@linerra/core/src/utils/verykUtils.js';
+// import * as s3Service from '@linerra/core/services/s3Service.js';
+// import ErrorShowType from '@linerra/core/enum/errorShowType.js';
+// import logger from '@linerra/core/utils/logger.js';
+// import { tracking as trackingApi } from '@linerra/core/utils/verykUtils.js';
 
 export async function getAvailableCarriers(req, res) {
   const carriers = await verykShipmentService.getAvailableCarriers();
@@ -29,7 +33,7 @@ export async function save(req, res) {
 
 export async function get(req, res) {
   const shipment = await verykShipmentService.get(req.params.number);
-  res.ok(shipmentDOToEditResVO(shipment));
+  res.ok(shipmentConvert.shipmentDOToEditResVO(shipment));
 }
 
 export async function del(req, res) {
@@ -47,7 +51,7 @@ export async function del(req, res) {
 
 export async function getDetail(req, res) {
   const shipment = await verykShipmentService.get(req.params.number);
-  res.ok(shipmentDOToDetailResVO(shipment));
+  res.ok(shipmentConvert.shipmentDOToDetailResVO(shipment));
 }
 
 export async function getPage(req, res) {
@@ -70,7 +74,7 @@ export async function getPage(req, res) {
 
   res.ok({
     items: (shipmentPage.Items || []).map((shipment) =>
-      shipmentDOToDetailResVO(shipment),
+      shipmentConvert.shipmentDOToDetailResVO(shipment),
     ),
     lastEvaluatedKey: shipmentPage.LastEvaluatedKey,
   });
@@ -127,7 +131,7 @@ export async function getSignedLabelUrl(req, res) {
 }
 
 export async function tracking(req, res) {
-  const trackingApiRes = await trackingApi(
+  const trackingApiRes = await verykUtils.tracking(
     { keyword: req.query.keyword },
     req.context.acceptLanguage,
   );

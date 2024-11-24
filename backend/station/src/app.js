@@ -1,11 +1,18 @@
 import express from 'express';
 import 'express-async-errors';
-import trace from '@linerra/core/src/middlewares/trace.js';
-import contextInjector from '@linerra/core/src/middlewares/contextInjector.js';
-import ErrorShowType from '@linerra/core/src/enum/errorShowType.js';
+// import trace from '@linerra/core/middlewares/trace.js';
+// import contextInjector from '@linerra/core/middlewares/contextInjector.js';
+// import ErrorShowType from '@linerra/core/enum/errorShowType.js';
 import path from './routes/common/path.js';
 import apiRouter from './routes/index.js';
-import errorHandler from '@linerra/core/src/middlewares/errorHandler.js';
+//import errorHandler from '@linerra/core/middlewares/errorHandler.js';
+import {
+  errorHandler,
+  ErrorShowType,
+  trace,
+  contextInjector,
+} from '@linerra/core';
+
 // create our Express app
 const app = express();
 

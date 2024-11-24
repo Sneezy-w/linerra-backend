@@ -1,4 +1,4 @@
-import * as verykGeneralService from '@linerra/core/src/services/veryk/verykGeneralService.js';
+import { verykGeneralService } from '@linerra/core';
 
 export async function getCarriers(req, res) {
   const carriers = verykGeneralService.getCarriers();

@@ -1,8 +1,6 @@
-import {
-  accessVerifier,
-  idTokenVerifier,
-} from '@linerra/core/src/utils/tokenVerifier.js';
-import logger from '@linerra/core/src/utils/logger.js';
+import { logger, tokenVerifier } from '@linerra/core';
+
+const { accessVerifier, idTokenVerifier } = tokenVerifier;
 
 export const auth = async (req, res, next) => {
   if (req.method === 'OPTIONS') {

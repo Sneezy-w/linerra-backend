@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "license": "MIT",
+  "main": "index.js",
   "dependencies": {
     "amazon-cognito-identity-js": "^6.3.12",
     "aws-jwt-verify": "^4.0.1",
-    "dynamodb-toolbox": "^1.13.4",
-    "uuid": "^9.0.1"
+    "dynamodb-toolbox": "^1.13.4"
   },
   "devDependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
