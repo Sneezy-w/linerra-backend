@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import trace from '@linerra/core/src/middlewares/trace.js';
 import contextInjector from '@linerra/core/src/middlewares/contextInjector.js';
 import ErrorShowType from '@linerra/core/src/enum/errorShowType.js';

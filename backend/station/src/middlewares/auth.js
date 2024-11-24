@@ -10,6 +10,7 @@ export const auth = async (req, res, next) => {
   }
   const token = req.headers['access-token'];
   const idToken = req.headers['identity-token'];
+  const sessionId = req.headers['session-id'];
 
   if (!token || !idToken) {
     return res.status(401).json({ message: 'No token provided' });
@@ -27,7 +28,7 @@ export const auth = async (req, res, next) => {
     }
     req.context.accessToken = token;
     req.context.idToken = idToken;
-    req.context.sessionId = req.headers['session-id'];
+    req.context.sessionId = sessionId;
 
     //const idTokenPayload = await idTokenVerifier.verify(req.context.idToken);
     req.context.user = {

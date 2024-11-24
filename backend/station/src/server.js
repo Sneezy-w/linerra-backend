@@ -2,6 +2,9 @@
 //const mongoose = require('mongoose');
 //const { globSync } = require('glob');
 //const path = require('path');
+//import 'module-alias/register';
+
+import '@linerra/core/src/dynamodb/toolbox.js';
 import serverless from 'serverless-http';
 import app from './app.js';
 // import environmental variables from our variables.env file

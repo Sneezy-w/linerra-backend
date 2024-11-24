@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as dictController from '../controllers/dictController.js';
 //import { auth } from '../middlewares/auth.js';
-import path from './common/path.js';
+import path from '../routes/common/path.js';
 
 const dictRouter = Router();
 

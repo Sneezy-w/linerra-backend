@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    },
+    "baseUrl": "src",
+    
 
     "checkJs": true,
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "node",
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+
+    //"skipLibCheck": true, // 添加这行
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"]
 }

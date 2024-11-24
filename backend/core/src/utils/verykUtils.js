@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // import logger from './logger';
 
-import ServiceError from './serviceError';
+import ServiceError from './serviceError.js';
 
 const verykApiUrl = process.env.VERYK_API_URL;
 const verykAppId = process.env.VERYK_APP_ID;
@@ -39,7 +39,7 @@ const buildUrl = function (action) {
   const secret = verykAppSecret;
 
   // Use HMAC SHA256 encryption
-  const hmac = crypto.createHmac('sha256', secret);
+  const hmac = crypto.createHmac('sha256', secret || '');
   hmac.update(queryString);
 
   // base64 encode to get signature
@@ -55,7 +55,7 @@ const getResponseData = function (response) {
   return response.data.response;
 };
 
-const getRegion = async function (acceptLanguage) {
+export const getRegion = async function (acceptLanguage) {
   const url = buildUrl('region');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -63,7 +63,7 @@ const getRegion = async function (acceptLanguage) {
   return getResponseData(response);
 };
 
-const getProvince = async function (params, acceptLanguage) {
+export const getProvince = async function (params, acceptLanguage) {
   const url = buildUrl('province');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -71,7 +71,7 @@ const getProvince = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const getCarrier = async function (params, acceptLanguage) {
+export const getCarrier = async function (params, acceptLanguage) {
   const url = buildUrl('carrier');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -79,7 +79,7 @@ const getCarrier = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const getService = async function (params, acceptLanguage) {
+export const getService = async function (params, acceptLanguage) {
   const url = buildUrl('service');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -87,7 +87,7 @@ const getService = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const getAccount = async function (acceptLanguage) {
+export const getAccount = async function (acceptLanguage) {
   const url = buildUrl('account');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -95,7 +95,7 @@ const getAccount = async function (acceptLanguage) {
   return getResponseData(response);
 };
 
-const quote = async function (params, acceptLanguage) {
+export const quote = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/quote');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -111,7 +111,7 @@ const quote = async function (params, acceptLanguage) {
 //   return getResponseData(response);
 // }
 
-const create = async function (params, acceptLanguage) {
+export const create = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/create');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -119,7 +119,7 @@ const create = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const shipmentList = async function (params, acceptLanguage) {
+export const shipmentList = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/list');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -127,7 +127,7 @@ const shipmentList = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const shipmentDetail = async function (params, acceptLanguage) {
+export const shipmentDetail = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/detail');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -135,7 +135,7 @@ const shipmentDetail = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const getLabel = async function (params, acceptLanguage) {
+export const getLabel = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/label');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
@@ -143,24 +143,10 @@ const getLabel = async function (params, acceptLanguage) {
   return getResponseData(response);
 };
 
-const tracking = async function (params, acceptLanguage) {
+export const tracking = async function (params, acceptLanguage) {
   const url = buildUrl('shipment/tracking');
   const headers = acceptLanguage ? { 'Accept-Language': acceptLanguage } : {};
 
   let response = await axios.post(url, params, { headers });
   return getResponseData(response);
-};
-
-export default {
-  getRegion,
-  getProvince,
-  getCarrier,
-  getService,
-  getAccount,
-  quote,
-  create,
-  shipmentList,
-  shipmentDetail,
-  getLabel,
-  tracking,
 };

@@ -11,12 +11,12 @@ export default [
         ...globals.node,
       },
 
-      ecmaVersion: 12,
+      ecmaVersion: 2022,
       sourceType: 'module',
     },
 
     rules: {
-      'no-console': 0,
+      'no-console': 'warn',
       // 禁止使用 console（可选）
       //'no-console': 'warn',
     },
