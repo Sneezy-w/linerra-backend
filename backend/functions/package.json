@@ -1,0 +1,10 @@
+{
+  "name": "functions",
+  "version": "0.0.1",
+  "main": "src/server.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@linerra/core": "file:../core"
+  }
+}

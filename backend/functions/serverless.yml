@@ -1,9 +1,4 @@
-service: station
-
-stages:
-  default:
-    params:
-      #cloudFrontAlternateDomain: ${param:cloudFrontAlternateDomain-${sls:stage}, param:defaultCloudFrontAlternateDomain}
+service: functions
 
 provider:
   name: aws
@@ -12,10 +7,6 @@ provider:
   timeout: 60
 
   environment:
-    STATION_USER_POOL_ID: ${param:stationUserPoolId}
-    STATION_USER_POOL_CLIENT_ID: ${param:stationUserPoolClientId}
-    STATION_USER_POOL_REGION: ${self:provider.region}
-    STATION_USER_POOL_DOMAIN: ${param:stationUserPoolDomain}
     MAIN_TABLE: ${param:mainTable}
     VERYK_APP_ID: ${env:VERYK_APP_ID, param:verykAppId}
     VERYK_APP_SECRET: ${env:VERYK_APP_SECRET, param:verykAppSecret}
@@ -23,27 +14,11 @@ provider:
     STATION_FRONTEND_URL: ${param:stationFrontendUrl}
     LOCAL_DYNAMO_DB_PORT: ${param:localDynamoDBPort}
     S3_LABEL_BUCKET_NAME: ${param:labelBucketName}
-    PROCESS_LABEL_AND_UPDATE_SHIPMENT_FUNCTION_NAME: ${param:processLabelAndUpdateShipmentFunctionName}
+    #PROCESS_LABEL_AND_UPDATE_SHIPMENT_FUNCTION_NAME: ${param:processLabelAndUpdateShipmentFunctionName}
 
   iam:
     role:
       statements:
-        - Effect: 'Allow'
-          Action:
-            - 'cognito-idp:AdminCreateUser'
-            - 'cognito-idp:AdminDeleteUser'
-            - 'cognito-idp:AdminGetUser'
-            - 'cognito-idp:AdminUpdateUserAttributes'
-            - 'cognito-idp:ListUsers'
-            - 'cognito-idp:AdminInitiateAuth'
-            - 'cognito-idp:AdminRespondToAuthChallenge'
-            - 'cognito-idp:AdminSetUserPassword'
-            - 'cognito-idp:SignUp'
-            - 'cognito-idp:ConfirmSignUp'
-            - 'cognito-idp:ForgotPassword'
-            - 'cognito-idp:ConfirmForgotPassword'
-            - 'cognito-idp:ChangePassword'
-          Resource: '*'
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -66,41 +41,10 @@ provider:
           Resource: '*'
 
 functions:
-  api:
-    handler: src/server.handler
-    layers:
-      - !Ref LayerDependenciesLambdaLayer
-    events:
-      - httpApi: '*'
-    environment:
-      # We are using the output of the shared resources CloudFormation template
-      # that is passed down from Serverless Compose, and the staged param "domain".
-      #TABLE_NAME: ${param:tableName}
-      #DOMAIN: ${param:domain}
-
-custom:
-  serverless-offline:
-    reloadHandler: true
-  dynamodb:
-    start:
-      docker: true
-      port: ${param:localDynamoDBPort}
-      migrate: true
-      noStart: true
-      #sharedDb: true
-
-  # addHttpOffline: # Only used for local testing (offline) as Lambda URL is not (yet) supported by Serverless Offline
-  #   integrationInternal:
-  #     offline:
-  #       - httpApi: "*"
-
-# package:
-#   individually: true
-
-plugins:
-  - serverless-cloudside-plugin
-  - serverless-dynamodb
-  - serverless-offline
+  processLabelAndUpdateShipment:
+    handler: processLabelAndUpdateShipment.handler
+    name: ${param:processLabelAndUpdateShipmentFunctionName}
+    timeout: 120
 
 build:
   esbuild:

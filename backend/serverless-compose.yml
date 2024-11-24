@@ -25,6 +25,7 @@ stages:
       stationFrontendUrl: ${env:STATION_FRONTEND_URL, param:stationFrontendUrl-${sls:stage}, 'http://localhost:8000'}
       localDynamoDBPort: ${env:LOCAL_DYNAMO_DB_PORT, 8900}
       labelBucketName: shipment-label-bucket-${sls:stage}
+      processLabelAndUpdateShipmentFunctionName: ${self:service}-${sls:stage}-processLabelAndUpdateShipment
 
 services:
   # Framework: AWS CloudFormation
@@ -48,6 +49,11 @@ services:
       # The shared CloudFormation stack is deployed first, and the output is passed to this service.
       stationUserPoolId: ${shared-resources.StationUserPoolId}
       stationUserPoolClientId: ${shared-resources.StationUserPoolClientId}
+
+  functions:
+    path: functions
+    dependsOn:
+      - shared-resources
 
   # Framework: AWS SAM
   #sam:
