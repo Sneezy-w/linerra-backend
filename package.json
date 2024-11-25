@@ -7,6 +7,9 @@
     "packages/*"
   ],
   "scripts": {
+    "build": "lerna run build",
+    "build:dynamodb": "lerna run build --scope @linerra/dynamodb",
+    "watch:dynamodb": "lerna run watch --scope @linerra/dynamodb",
     "build:station-layer": "node scripts/build-station-layer.js",
     "deploy:station": "yarn build:station-layer && cd backend && serverless deploy --service station"
   },
