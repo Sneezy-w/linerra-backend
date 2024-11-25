@@ -1,5 +1,5 @@
-import { Shipment } from '../entity/shipment';
-import { MainTable } from '../table/mainTable';
+import { Shipment } from '../entity/shipment.js';
+import { MainTable } from '../table/mainTable.js';
 import {
   Condition,
   DeleteItemCommand,

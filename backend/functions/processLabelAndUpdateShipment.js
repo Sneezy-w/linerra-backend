@@ -1,3 +1,10 @@
+import { verykShipmentService } from '@linerra/core';
+import { logger, sleep, verykUtils } from '@linerra/util';
+import { shipmentConvert } from '@linerra/model';
+import { shipmentRepository } from '@linerra/dynamodb';
+
+const { shipmentApiResToApiUpdateDO } = shipmentConvert;
+
 export const handler = async (event) => {
   const { shipmentId, acceptLanguage } = event;
 
@@ -8,7 +15,7 @@ export const handler = async (event) => {
     await sleep(5000);
     const labelFile = await verykShipmentService.saveAllLabelFile(shipmentId);
 
-    const shipmentDetailApiRes = await shipmentDetail(
+    const shipmentDetailApiRes = await verykUtils.shipmentDetail(
       { id: shipmentId },
       acceptLanguage,
     );
@@ -17,10 +24,7 @@ export const handler = async (event) => {
       shipmentApiResToApiUpdateDO(shipmentDetailApiRes);
     shipmentApiUpdateDO.labelFile = labelFile;
 
-    await Shipment.build(UpdateAttributesCommand)
-      .item({ ...shipmentApiUpdateDO })
-      .options({ returnValues: 'ALL_NEW' })
-      .send();
+    await shipmentRepository.updateAndReturn(shipmentApiUpdateDO);
 
     logger.info('Successfully processed label and updated shipment', {
       shipmentId,

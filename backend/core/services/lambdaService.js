@@ -3,7 +3,7 @@ const lambda = new Lambda({
   apiVersion: '2015-03-31',
   // endpoint needs to be set only if it deviates from the default
   endpoint: process.env.IS_OFFLINE
-    ? 'http://localhost:3002'
+    ? 'http://localhost:3003'
     : `https://lambda.${process.env.AWS_REGION}.amazonaws.com`,
 });
 

@@ -1,5 +1,5 @@
 //export * from './table/mainTable';
-//export * from './entity/shipment';
-//export * from './entity/stationUserSession';
-export * as stationUserSessionRepository from './repository/stationUserSessionRepository';
-export * as shipmentRepository from './repository/shipmentRepository';
+//export * from './entity/shipment.ts';
+//export * from './entity/stationUserSession.ts';
+export * as stationUserSessionRepository from './repository/stationUserSessionRepository.js';
+export * as shipmentRepository from './repository/shipmentRepository.js';

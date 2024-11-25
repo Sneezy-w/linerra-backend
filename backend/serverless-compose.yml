@@ -25,7 +25,7 @@ stages:
       stationFrontendUrl: ${env:STATION_FRONTEND_URL, param:stationFrontendUrl-${sls:stage}, 'http://localhost:8000'}
       localDynamoDBPort: ${env:LOCAL_DYNAMO_DB_PORT, 8900}
       labelBucketName: shipment-label-bucket-${sls:stage}
-      processLabelAndUpdateShipmentFunctionName: ${self:service}-${sls:stage}-processLabelAndUpdateShipment
+      processLabelAndUpdateShipmentFunctionName: ${self:app}-${sls:stage}-processLabelAndUpdateShipment
 
 services:
   # Framework: AWS CloudFormation

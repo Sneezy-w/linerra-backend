@@ -1,5 +1,5 @@
 import { Entity, schema, string, number, prefix } from 'dynamodb-toolbox';
-import { MainTable } from '../table/mainTable';
+import { MainTable } from '../table/mainTable.js';
 
 export const StationUserSession = new Entity({
   name: 'StationUserSession',

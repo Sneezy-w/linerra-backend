@@ -1,5 +1,5 @@
 import { Table } from 'dynamodb-toolbox';
-import { documentClient } from '../utils/dynamoClient';
+import { documentClient } from '../utils/dynamoClient.js';
 
 export const MainTable = new Table({
   name: process.env.MAIN_TABLE!,

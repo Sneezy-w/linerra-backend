@@ -7,7 +7,7 @@ import {
   map,
   list,
 } from 'dynamodb-toolbox';
-import { MainTable } from '../table/mainTable';
+import { MainTable } from '../table/mainTable.js';
 import { Dicts } from '@linerra/enum';
 
 export const Shipment = new Entity({

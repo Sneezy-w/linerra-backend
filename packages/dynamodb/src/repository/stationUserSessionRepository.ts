@@ -1,4 +1,4 @@
-import { StationUserSession } from '../entity/stationUserSession';
+import { StationUserSession } from '../entity/stationUserSession.js';
 import {
   PutItemCommand,
   GetItemCommand,

@@ -87,3 +87,20 @@ layers:
     retain: false # optional, false by default. If true, layer versions are not deleted as new ones are created
     allowedAccounts:
       - '*'
+
+custom:
+  serverless-offline:
+    reloadHandler: true
+    lambdaPort: 3003
+  dynamodb:
+    start:
+      docker: true
+      port: ${param:localDynamoDBPort}
+      migrate: true
+      noStart: true
+      #sharedDb: true
+
+plugins:
+  - serverless-cloudside-plugin
+  - serverless-dynamodb
+  - serverless-offline
