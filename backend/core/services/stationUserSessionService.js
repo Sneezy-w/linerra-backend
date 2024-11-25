@@ -1,40 +1,25 @@
-import {
-  PutItemCommand,
-  GetItemCommand,
-  UpdateItemCommand,
-  DeleteItemCommand,
-} from 'dynamodb-toolbox';
 import { v4 as uuidv4 } from 'uuid';
-import { StationUserSession } from '../dynamodb/entity/stationUserSession.js';
+import { stationUserSessionRepository } from '@linerra/dynamodb';
 
 export const createSession = async (userId, refreshToken, expirationTime) => {
   const sessionId = uuidv4();
-  await StationUserSession.build(PutItemCommand)
-    .item({
-      sessionId,
-      userId,
-      refreshToken,
-      expirationTime,
-    })
-    .send();
+  await stationUserSessionRepository.create({
+    sessionId,
+    userId,
+    refreshToken,
+    expirationTime,
+  });
   return sessionId;
 };
 
 export const getSession = async (sessionId) => {
-  const { Item } = await StationUserSession.build(GetItemCommand)
-    .key({ sessionId })
-    .send();
-  return Item;
+  return await stationUserSessionRepository.findOne(sessionId);
 };
 
 export const updateSessionLastUsed = async (sessionId) => {
-  await StationUserSession.build(UpdateItemCommand)
-    .item({
-      sessionId,
-    })
-    .send();
+  await stationUserSessionRepository.updateLastUsed(sessionId);
 };
 
 export const deleteSession = async (sessionId) => {
-  await StationUserSession.build(DeleteItemCommand).key({ sessionId }).send();
+  await stationUserSessionRepository.del(sessionId);
 };

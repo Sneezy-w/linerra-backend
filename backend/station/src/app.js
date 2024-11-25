@@ -6,12 +6,8 @@ import 'express-async-errors';
 import path from './routes/common/path.js';
 import apiRouter from './routes/index.js';
 //import errorHandler from '@linerra/core/middlewares/errorHandler.js';
-import {
-  errorHandler,
-  ErrorShowType,
-  trace,
-  contextInjector,
-} from '@linerra/core';
+import { errorHandler, trace, contextInjector } from '@linerra/core';
+import { ErrorShowType } from '@linerra/enum';
 
 // create our Express app
 const app = express();

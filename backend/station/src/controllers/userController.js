@@ -1,9 +1,8 @@
-import {
-  ErrorShowType,
-  logger,
-  stationCognitoService,
-  tokenVerifier,
-} from '@linerra/core';
+import { stationCognitoService } from '@linerra/core';
+
+import { accessVerifier, idTokenVerifier, logger } from '@linerra/util';
+import { ErrorShowType } from '@linerra/enum';
+
 // import {
 //   accessVerifier,
 //   idTokenVerifier,
@@ -11,7 +10,7 @@ import {
 // import {
 //   accessVerifier,
 
-const { accessVerifier, idTokenVerifier } = tokenVerifier;
+//const { accessVerifier, idTokenVerifier } = tokenVerifier;
 
 export async function signUp(req, res) {
   try {

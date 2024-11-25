@@ -1,0 +1,25 @@
+{
+  "name": "@linerra/dynamodb",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "dynamodb-toolbox": "^1.13.4",
+    "@linerra/enum": "*",
+    "@linerra/util": "*"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "files": [
+    "dist"
+  ]
+}

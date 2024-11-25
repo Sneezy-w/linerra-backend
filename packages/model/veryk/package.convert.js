@@ -1,4 +1,4 @@
-import { getDefaultCurrency } from '../../constant/verykConstant.js';
+import { getDefaultCurrency } from '@linerra/util';
 
 // export const packageItemReqVOToApiReq = (packageItemReqVO) => {
 //   return {

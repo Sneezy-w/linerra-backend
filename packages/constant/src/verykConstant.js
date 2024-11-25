@@ -403,11 +403,3 @@ export const verykCarriers = [
 //   symbol: "$",
 //   value: "0.00"
 // };
-
-export const getDefaultCurrency = (value) => {
-  return {
-    code: 'CAD',
-    symbol: '$',
-    value: value.toFixed(2),
-  };
-};

@@ -1,29 +1,19 @@
-import { verykCarriers } from '../../constant/verykConstant.js';
-import {
-  quoteApiResToResVO,
-  quoteReqVOToApiReq,
-} from '../../models/veryk/quote.convert.js';
-import { quote as quoteApi, create, getLabel } from '../../utils/verykUtils.js';
-import {
+import { verykCarriers } from '@linerra/constant';
+import { quoteConvert, shipmentConvert } from '@linerra/model';
+import { verykUtils } from '@linerra/util';
+
+import { generateOrderNumber, ServiceError, logger } from '@linerra/util';
+import { shipmentRepository } from '@linerra/dynamodb';
+
+import * as s3Service from '../../services/s3Service.js';
+import * as lambdaService from '../../services/lambdaService.js';
+
+const { quoteReqVOToApiReq, quoteApiResToResVO } = quoteConvert;
+const {
   shipmentApiResToApiUpdateDO,
   shipmentReqVOToApiReq,
   shipmentReqVOToDO,
-} from '../../models/veryk/shipment.convert.js';
-import { generateOrderNumber, now } from '../../utils/utils.js';
-import { MainTable } from '../../dynamodb/toolbox.js';
-import { Shipment } from '../../dynamodb/entity/shipment.js';
-import {
-  DeleteItemCommand,
-  GetItemCommand,
-  PutItemCommand,
-  QueryCommand,
-} from 'dynamodb-toolbox';
-import { UpdateAttributesCommand } from 'dynamodb-toolbox';
-import ServiceError from '../../utils/serviceError.js';
-//import { updateAttributesCommandReturnValuesOptionsSet } from "dynamodb-toolbox/dist/esm/entity/actions/updateAttributes/options";
-import * as s3Service from '../../services/s3Service.js';
-import logger from '../../utils/logger.js';
-import * as lambdaService from '../../services/lambdaService.js';
+} = shipmentConvert;
 
 /**
  * Get available carriers
@@ -43,122 +33,41 @@ export const getAvailableCarriers = () => {
  * @returns
  */
 export const quote = async (params, acceptLanguage) => {
-  const quotes = await quoteApi(quoteReqVOToApiReq(params), acceptLanguage);
+  const quotes = await verykUtils.quote(
+    quoteReqVOToApiReq(params),
+    acceptLanguage,
+  );
   return quotes.map(quoteApiResToResVO);
 };
 
 export const save = async (params, currentUser) => {
   const shipmentDO = shipmentReqVOToDO(params);
   shipmentDO.stationId = currentUser.stationId;
-  //shipmentDO.sortTimestamp = now();
-  //let response: UpdateItemResponse<typeof Shipment, { returnValues: 'ALL_NEW' }> | UpdateItemResponse<typeof Shipment, { returnValues: 'ALL_OLD' }>;
-  //shipmentDO.GSI1PK = "SHIPMENT_NO";
+
   if (!shipmentDO.number) {
     shipmentDO.number = generateOrderNumber('VK', currentUser.stationNo);
-    await Shipment.build(PutItemCommand)
-      .item({ ...shipmentDO, sortTimestamp: now() })
-      //.options({ returnValues: "ALL_OLD" })
-      .send();
+    await shipmentRepository.create(shipmentDO);
   } else {
-    //console.log(shipmentDO);
-
-    // const command = Shipment.build(UpdateItemCommand)
-    //   .item({ ...shipmentDO })
-    // console.log(command);
-    //const { Item } = await Shipment.build(GetItemCommand).key({ number: shipmentDO.number }).send()
-
-    //console.log(Item);
-    //console.log({ ...Item, ...shipmentDO });
-    await Shipment.build(UpdateAttributesCommand)
-      .item({ ...shipmentDO })
-      //.options({ returnValues: "ALL_NEW" })
-      .send();
+    await shipmentRepository.update(shipmentDO);
   }
   return { number: shipmentDO.number };
 };
 
 export const get = async (number) => {
-  const { Item } = await Shipment.build(GetItemCommand).key({ number }).send();
-  return Item;
+  const shipmentDO = await shipmentRepository.findOne(number);
+  return shipmentDO;
 };
 
 export const deleteShipment = async (number) => {
   // only delete open shipment
-  const condition = {
-    attr: 'status',
-    eq: 'open',
-  };
-  await Shipment.build(DeleteItemCommand)
-    .key({ number })
-    //@ts-ignore
-    .options({ condition })
-    .send();
+  await shipmentRepository.delOpenShipment(number);
 };
 
 export const getPage = async (params, currentUser) => {
-  // const filter: Record<string, any> = {}
-  // if (params.status) {
-  //   filter.status = {
-  //     attribute: "status",
-  //     eq: params.status
-  //   }
-  // }
-  let statusCondition, keywordCondition;
-  let conditions = [];
-  if (params.status) {
-    statusCondition = {
-      attr: 'status',
-      eq: params.status,
-    };
-    conditions.push(statusCondition);
-  }
-
-  if (params.keyword) {
-    keywordCondition = {
-      or: [
-        {
-          attr: 'number',
-          contains: params.keyword,
-        },
-        {
-          attr: 'externalId',
-          contains: params.keyword,
-        },
-      ],
-    };
-    conditions.push(keywordCondition);
-  }
-
-  let filters = {};
-
-  if (conditions.length > 1) {
-    filters.Shipment = {
-      and: conditions,
-    };
-  } else if (conditions.length === 1) {
-    filters.Shipment = conditions[0];
-  }
-
-  const pageResult = await MainTable.build(QueryCommand)
-    .query({
-      index: 'GSI1',
-      partition: `STATION#${currentUser.stationId}`,
-      range: {
-        gte: `SHIPMENT#${params.dateRange[0]}`,
-        lte: `SHIPMENT#${params.dateRange[1]}`,
-      },
-    })
-    .entities(Shipment)
-    .options({
-      limit: conditions.length > 0 ? undefined : params.limit,
-      reverse: true,
-      //@ts-ignore
-      filters: filters,
-      exclusiveStartKey: params.lastEvaluatedKey,
-    })
-    .send();
-  //console.log(pageResult);
-  //console.log(pageResult.LastEvaluatedKey);
+  const pageResult = await shipmentRepository.paginateByStation(
+    params,
+    currentUser.stationId,
+  );
   return pageResult;
 };
 
@@ -189,7 +98,7 @@ export const submit = async (params, currentUser, acceptLanguage) => {
     } else {
       apiReq.option = { reference_number: number };
     }
-    const shipmentApiRes = await create(apiReq, acceptLanguage);
+    const shipmentApiRes = await verykUtils.create(apiReq, acceptLanguage);
     //console.log(shipmentApiRes);
     //console.log(JSON.stringify(shipmentApiRes.package.packages, null, 2));
 
@@ -202,10 +111,8 @@ export const submit = async (params, currentUser, acceptLanguage) => {
     //shipmentApiUpdateDO.labelFile = labelFile;
 
     //console.log(shipmentApiUpdateDO);
-    const { Attributes } = await Shipment.build(UpdateAttributesCommand)
-      .item({ ...shipmentApiUpdateDO })
-      .options({ returnValues: 'ALL_NEW' })
-      .send();
+    const Attributes =
+      await shipmentRepository.updateAndReturn(shipmentApiUpdateDO);
     // const referenceNumber = generateOrderNumber("VK", currentUser.stationNo);
     // const apiReq = shipmentReqVOToApiReq(params);
     // if (apiReq.option) {
@@ -242,7 +149,7 @@ export const submit = async (params, currentUser, acceptLanguage) => {
  * @returns
  */
 export const getAllPrintableLabels = async (shipmentId) => {
-  const labelApiRes = await getLabel({ id: shipmentId, option: 1 });
+  const labelApiRes = await verykUtils.getLabel({ id: shipmentId, option: 1 });
   return labelApiRes;
 };
 

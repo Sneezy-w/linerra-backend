@@ -25,3 +25,11 @@ export const generateRandomString = function (length) {
 export const sleep = function (ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+export const getDefaultCurrency = (value) => {
+  return {
+    code: 'CAD',
+    symbol: '$',
+    value: value.toFixed(2),
+  };
+};

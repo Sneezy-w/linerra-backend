@@ -1,4 +1,4 @@
-import { Dicts } from '@linerra/core';
+import { Dicts } from '@linerra/enum';
 
 export async function getDicts(req, res) {
   res.ok(Dicts);

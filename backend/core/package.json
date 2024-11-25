@@ -6,9 +6,13 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "uuid": "^9.0.1",
     "amazon-cognito-identity-js": "^6.3.12",
-    "aws-jwt-verify": "^4.0.1",
-    "dynamodb-toolbox": "^1.13.4"
+    "@linerra/util": "*",
+    "@linerra/constant": "*",
+    "@linerra/enum": "*",
+    "@linerra/model": "*",
+    "@linerra/dynamodb": "*"
   },
   "devDependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
